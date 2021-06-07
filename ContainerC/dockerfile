@@ -1,0 +1,12 @@
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt update
+RUN apt install -y python3.9 python3-pip
+
+RUN apt install -y ssh
+
+COPY test_project/requirements.txt /
+RUN pip install -r /requirements.txt
+COPY test_project/ /test
+WORKDIR /test
+CMD ["pytest", "--log-cli-level=50", "--log-file=./results/python_logfile" , "--html=./results/report.html"]

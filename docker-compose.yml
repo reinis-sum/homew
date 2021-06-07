@@ -1,0 +1,39 @@
+version: '3.8'
+
+
+networks:
+  frontend:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+services:
+
+  dut:
+    build: ./ContainerB
+    container_name: dut
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.6
+    command: bash -c "./services_start.sh & tail -f /dev/null"
+
+  testing-machine:
+    build: ./ContainerA
+    container_name: tm
+    depends_on:
+      - dut
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.8
+    command: bash -c "./services_start.sh & tail -f /dev/null"
+
+  orchestator:
+    build: ./ContainerC
+    container_name: orch
+    networks:
+      frontend:
+    volumes:
+      - ./results:/test/results
+    depends_on:
+      - testing-machine
+      - dut

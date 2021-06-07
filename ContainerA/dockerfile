@@ -1,0 +1,17 @@
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt update
+RUN apt install -y iputils-ping wget curl openssh-server
+
+RUN useradd -m -d /home/tm_user tm_user && \
+    echo "tm_user:test" |chpasswd  && \
+    mkdir -p /home/tm_user/.ssh && \
+    chmod 755 /home/tm_user/.ssh && \
+    usermod -G root tm_user
+
+COPY ssh_keys/ /home/tm_user/.ssh
+COPY services_start.sh ./services_start.sh
+
+RUN chmod 770 /home/tm_user/.ssh/ssh_test
+RUN chmod 770 /home/tm_user/.ssh/ssh_test.pub

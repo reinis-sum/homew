@@ -1,0 +1,19 @@
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt update
+RUN apt install -y apache2 openssh-server
+
+RUN useradd -m -d /home/dut_user dut_user && \
+    echo "dut_user:test" |chpasswd  && \
+    mkdir -p /home/dut_user/.ssh && \
+    chmod 700 /home/dut_user/.ssh
+
+RUN echo "ServerName dut" >> /etc/apache2/apache2.conf
+
+COPY ssh_keys/ssh_test.pub /home/dut_user/.ssh/authorized_keys
+
+RUN chown dut_user:dut_user -R /home/dut_user/.ssh && \
+    chmod 600 /home/dut_user/.ssh/authorized_keys
+
+COPY index.html ./var/www/html
+COPY services_start.sh ./services_start.sh
