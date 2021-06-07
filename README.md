@@ -1,5 +1,5 @@
 # homew
-Homework repo
+**Homework repo:**
 
 Run with:
 
